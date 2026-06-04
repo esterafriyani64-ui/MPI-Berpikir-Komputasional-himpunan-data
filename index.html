@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPI Informatika - Himpunan Data Terstruktur</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons for IFP Visuals -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #f0fdf4 0%, #dcfce7 100%);
+            overflow-x: hidden;
+            user-select: none; /* Mencegah seleksi teks yang tidak sengaja pada papan interaktif */
+        }
+        h1, h2, h3, .font-fun {
+            font-family: 'Fredoka', sans-serif;
+        }
+        /* Custom Scrollbar untuk IFP */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4ade80;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 transition-colors duration-300">
+
+    <!-- Header / Navigasi Atas -->
+    <header class="bg-white/80 backdrop-blur-md border-b-4 border-green-500 py-3 px-6 shadow-md flex justify-between items-center sticky top-0 z-40">
+        <div class="flex items-center gap-3">
+            <div class="bg-green-500 text-white p-2 rounded-xl shadow-md">
+                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold text-green-700 tracking-wide">Informatika Kelas VII</h1>
+                <p class="text-xs text-slate-500 font-semibold">Berpikir Komputasional: Himpunan Data</p>
+            </div>
+        </div>
+        
+        <!-- Info Pengguna & Tombol Fullscreen -->
+        <div class="flex items-center gap-4">
+            <div id="userInfoDisplay" class="hidden md:flex flex-col text-right bg-green-50 px-3 py-1 rounded-lg border border-green-200">
+                <span id="displayNama" class="font-bold text-sm text-green-800">-</span>
+                <span id="displaySekolah" class="text-xs text-slate-500">-</span>
+            </div>
+            
+            <button onclick="toggleFullscreen()" class="bg-blue-500 hover:bg-blue-600 active:scale-95 text-white p-3 rounded-xl shadow-md transition-all flex items-center gap-2 font-bold text-sm">
+                <i id="fullscreenIcon" class="fa-solid fa-expand"></i> <span class="hidden sm:inline">Layar Penuh</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Konten Utama Dinamis -->
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-6xl flex flex-col justify-center">
+        
+        <!-- 1. HALAMAN DEPAN / WELCOME SCREEN -->
+        <section id="welcomeScreen" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border-4 border-green-400 text-center max-w-3xl mx-auto my-auto animate-fade-in">
+            <div class="flex justify-center mb-4">
+                <div class="relative">
+                    <!-- Guru Avatar Representation -->
+                    <div class="w-24 h-24 bg-green-100 rounded-full border-4 border-green-400 flex items-center justify-center text-5xl">
+                        👩‍🏫
+                    </div>
+                    <span class="absolute bottom-0 right-0 bg-yellow-400 text-slate-800 text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white shadow">Ibu Ester</span>
+                </div>
+            </div>
+            
+            <h2 class="text-2xl md:text-3xl font-extrabold text-green-700 mb-2">Halo Anak-Anak Hebat!</h2>
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl text-left mb-6 max-w-xl mx-auto">
+                <p class="italic text-slate-700 text-sm md:text-base leading-relaxed">
+                    "Selamat datang di petualangan seru berpikir komputasional! Pernahkah kalian kebingungan mencari baju kesayangan di lemari yang berantakan? Atau mengantre di kantin sekolah? Semua itu berhubungan dengan bagaimana kita mengatur data! Mari kita pelajari konsep <strong>Himpunan Data Terstruktur</strong> dengan gembira. Ibu yakin kalian pasti bisa menyelesaikan semua tantangan di sini. Tetap semangat dan mari kita mulai!"
+                </p>
+            </div>
+
+            <!-- Input Identitas Siswa -->
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-left max-w-md mx-auto shadow-inner mb-6">
+                <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2"><i class="fa-solid fa-user-pen text-green-500"></i> Lengkapi Identitas Petualang:</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Lengkap</label>
+                        <input type="text" id="inputNama" placeholder="Contoh: Budi Santoso" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-400 focus:outline-none font-semibold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Asal Sekolah</label>
+                        <input type="text" id="inputSekolah" placeholder="Contoh: SMP Negeri 1 Harapan" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-400 focus:outline-none font-semibold text-slate-700">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="mulaiPetualangan()" class="w-full max-w-md bg-green-500 hover:bg-green-600 active:scale-95 text-white font-extrabold text-lg md:text-xl py-4 px-8 rounded-2xl shadow-lg hover:shadow-green-200 transition-all transform hover:-translate-y-1">
+                MASUK MENU UTAMA <i class="fa-solid fa-circle-arrow-right ml-2 animate-bounce"></i>
+            </button>
+        </section>
+
+        <!-- 2. MENU UTAMA (TAMPIL SETELAH LOGIN) -->
+        <section id="mainMenu" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 my-auto">
+            <!-- Header Menu -->
+            <div class="col-span-1 md:col-span-2 lg:col-span-4 text-center mb-4">
+                <div class="inline-block bg-yellow-100 border-2 border-yellow-400 text-yellow-800 text-xs uppercase px-3 py-1 rounded-full font-extrabold tracking-widest mb-2 shadow-sm">
+                    PETA BELAJAR AKTIF
+                </div>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-green-700">Pilih Destinasi Belajarmu!</h2>
+                <p class="text-slate-500 mt-1 font-medium">Sentuh salah satu kartu untuk menjelajahi materi atau tantangan.</p>
+            </div>
+
+            <!-- Kartu Menu 1: Tujuan & Panduan -->
+            <div onclick="bukaModul('tujuan')" class="cursor-pointer group bg-white rounded-3xl p-6 border-4 border-blue-400 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 flex flex-col justify-between">
+                <div>
+                    <div class="w-16 h-16 bg-blue-100 text-blue-500 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-blue-700 mb-2">1. Tujuan & Panduan</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Apa yang akan kamu pelajari dan bagaimana cara berpetualang di sini.</p>
+                </div>
+                <span class="mt-6 text-blue-500 font-bold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-1">Buka Sekarang <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+
+            <!-- Kartu Menu 2: Rangkuman Materi -->
+            <div onclick="bukaModul('materi')" class="cursor-pointer group bg-white rounded-3xl p-6 border-4 border-amber-400 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 flex flex-col justify-between">
+                <div>
+                    <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-amber-700 mb-2">2. Rangkuman Materi</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Pelajari konsep Himpunan Data, Antrean (Queue), dan Tumpukan (Stack).</p>
+                </div>
+                <span class="mt-6 text-amber-500 font-bold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-1">Ayo Membaca <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+
+            <!-- Kartu Menu 3: Ayo Berpetualang (Game) -->
+            <div onclick="bukaModul('petualangan')" class="cursor-pointer group bg-white rounded-3xl p-6 border-4 border-green-400 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute top-4 right-4 bg-green-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">Game Seru</div>
+                <div>
+                    <div class="w-16 h-16 bg-green-100 text-green-500 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-green-700 mb-2">3. Ayo Berpetualang</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Selesaikan 3 level menarik dengan tantangan Mudah, Sedang, hingga Sulit!</p>
+                </div>
+                <div class="mt-6">
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-2">
+                        <div id="progressBarMenu" class="bg-green-500 h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between items-center text-xs font-bold">
+                        <span class="text-green-600">Progres Misi</span>
+                        <span id="progressTextMenu" class="text-slate-500">0/9 Tantangan</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kartu Menu 4: Asesmen Sumatif & HOTS -->
+            <div onclick="bukaModul('asesmen')" class="cursor-pointer group bg-white rounded-3xl p-6 border-4 border-purple-400 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 flex flex-col justify-between">
+                <div>
+                    <div class="w-16 h-16 bg-purple-100 text-purple-500 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-clipboard-question"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-purple-700 mb-2">4. Asesmen & HOTS</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Uji pemahamanmu dengan Proyek Praktik Nyata dan Tantangan Soal Cerita Uraian.</p>
+                </div>
+                <span class="mt-6 text-purple-500 font-bold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-1">Mulai Ujian <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </section>
+
+        <!-- 3. DETAIL MODUL: TUJUAN & PANDUAN -->
+        <section id="modulTujuan" class="hidden bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-blue-400 animate-fade-in my-auto max-w-4xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-blue-700 mb-4 flex items-center gap-3">
+                <i class="fa-solid fa-bullseye text-blue-500"></i> Tujuan Pembelajaran & Panduan
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tujuan Pembelajaran -->
+                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-200">
+                    <h3 class="font-bold text-blue-800 text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-star text-yellow-400"></i> Apa yang Akan Kamu Kuasai?</h3>
+                    <ul class="space-y-3 text-slate-700 text-sm font-semibold">
+                        <li class="flex gap-2"><i class="fa-solid fa-circle-check text-green-500 mt-1"></i> <span>Memahami apa itu data terstruktur dan bagaimana hubungannya dengan kehidupan sehari-hari.</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-circle-check text-green-500 mt-1"></i> <span>Mampu mengelompokkan data berdasarkan karakteristik tertentu (Himpunan).</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-circle-check text-green-500 mt-1"></i> <span>Memahami mekanisme urutan data bertipe Tumpukan (Stack - LIFO) dan Antrean (Queue - FIFO).</span></li>
+                    </ul>
+                </div>
+                
+                <!-- Panduan Penggunaan -->
+                <div class="bg-amber-50 p-5 rounded-2xl border border-amber-200">
+                    <h3 class="font-bold text-amber-800 text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-gamepad text-amber-500"></i> Panduan Bermain & Belajar</h3>
+                    <ul class="space-y-3 text-slate-700 text-sm font-semibold">
+                        <li class="flex gap-2"><i class="fa-solid fa-compass text-amber-500 mt-1"></i> <span>Pelajari rangkuman materi interaktif terlebih dahulu agar mengerti konsep dasarnya.</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-gamepad text-amber-500 mt-1"></i> <span>Selesaikan modul game <strong>Ayo Berpetualang</strong> dari Level 1 hingga Level 3.</span></li>
+                        <li class="flex gap-2"><i class="fa-solid fa-lock text-amber-500 mt-1"></i> <span>Setiap level memiliki tingkat Mudah, Sedang, dan Sulit yang harus diselesaikan bertahap.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tombol Kembali -->
+            <div class="mt-8 flex justify-center">
+                <button onclick="kembaliKeMenu()" class="bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> Kembali ke Menu Utama
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. DETAIL MODUL: RANGKUMAN MATERI -->
+        <section id="modulMateri" class="hidden bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-amber-400 animate-fade-in my-auto max-w-4xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-amber-700 mb-6 flex items-center gap-3">
+                <i class="fa-solid fa-book-open text-amber-500"></i> Rangkuman Materi Interaktif
+            </h2>
+
+            <!-- Tab Navigasi Materi -->
+            <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-200 pb-4">
+                <button onclick="pilihMateri(1)" id="tabMat1" class="px-4 py-2 rounded-xl font-bold text-sm bg-amber-500 text-white shadow-md">1. Konsep Himpunan</button>
+                <button onclick="pilihMateri(2)" id="tabMat2" class="px-4 py-2 rounded-xl font-bold text-sm bg-slate-100 text-slate-600 hover:bg-amber-100">2. Antrean (Queue)</button>
+                <button onclick="pilihMateri(3)" id="tabMat3" class="px-4 py-2 rounded-xl font-bold text-sm bg-slate-100 text-slate-600 hover:bg-amber-100">3. Tumpukan (Stack)</button>
+            </div>
+
+            <!-- Konten Materi 1 -->
+            <div id="kontenMateri1" class="space-y-4">
+                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 flex flex-col md:flex-row gap-4 items-center">
+                    <div class="text-5xl">🛍️</div>
+                    <div>
+                        <h3 class="font-extrabold text-amber-800 text-lg">Apa itu Himpunan Data Terstruktur?</h3>
+                        <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+                            Himpunan adalah kumpulan benda atau objek yang dapat didefinisikan dengan jelas. Dalam Informatika, agar data mudah dicari, dianalisis, dan diolah komputer, kita harus mengaturnya ke dalam struktur tertentu.
+                        </p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="border border-slate-200 p-4 rounded-xl shadow-sm">
+                        <span class="font-bold text-sm text-green-600 uppercase block mb-1">Contoh Himpunan Terstruktur:</span>
+                        <p class="text-xs text-slate-500 leading-relaxed">Isi tas sekolah yang dipilah berdasarkan fungsinya: Himpunan alat tulis, himpunan buku pelajaran, dan himpunan wadah makanan.</p>
+                    </div>
+                    <div class="border border-slate-200 p-4 rounded-xl shadow-sm">
+                        <span class="font-bold text-sm text-red-600 uppercase block mb-1">Contoh Tidak Terstruktur:</span>
+                        <p class="text-xs text-slate-500 leading-relaxed">Isi tas sekolah yang dicampur aduk begitu saja, sehingga pulpen, remah roti, buku tulis, dan kaos kaki kotor menyatu tanpa pemisah.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konten Materi 2 (Queue) -->
+            <div id="kontenMateri2" class="hidden space-y-4">
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200 flex flex-col md:flex-row gap-4 items-center">
+                    <div class="text-5xl">🚶‍♂️🚶‍♀️🚶</div>
+                    <div>
+                        <h3 class="font-extrabold text-blue-800 text-lg">Metode Antrean (Queue - FIFO)</h3>
+                        <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+                            Mekanisme <strong>FIFO (First In, First Out)</strong>: Data yang pertama kali masuk akan menjadi data yang pertama kali keluar. Sama persis seperti kamu mengantre di kasir supermarket atau loket bioskop. Siapa yang datang duluan akan dilayani duluan!
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm flex flex-col items-center">
+                    <span class="font-bold text-sm text-blue-600 mb-2">Simulasi Alur Antrean (Queue):</span>
+                    <div class="flex items-center gap-2 bg-slate-100 p-3 rounded-lg w-full justify-center overflow-x-auto">
+                        <div class="bg-red-500 text-white px-3 py-1.5 rounded font-bold text-xs">1. Masuk Duluan (Keluar Duluan)</div>
+                        <i class="fa-solid fa-arrow-left text-slate-400"></i>
+                        <div class="bg-yellow-500 text-white px-3 py-1.5 rounded font-bold text-xs">2. Sedang Menunggu</div>
+                        <i class="fa-solid fa-arrow-left text-slate-400"></i>
+                        <div class="bg-green-500 text-white px-3 py-1.5 rounded font-bold text-xs">3. Baru Masuk Antrean</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konten Materi 3 (Stack) -->
+            <div id="kontenMateri3" class="hidden space-y-4">
+                <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200 flex flex-col md:flex-row gap-4 items-center">
+                    <div class="text-5xl">📚</div>
+                    <div>
+                        <h3 class="font-extrabold text-purple-800 text-lg">Metode Tumpukan (Stack - LIFO)</h3>
+                        <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+                            Mekanisme <strong>LIFO (Last In, First Out)</strong>: Data yang terakhir kali dimasukkan akan menjadi data yang pertama kali diambil. Contoh nyata adalah tumpukan piring makan di dapur atau tumpukan buku di mejamu. Jika ingin mengambil buku terbawah, kamu harus memindahkan buku di atasnya terlebih dahulu!
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm flex flex-col items-center">
+                    <span class="font-bold text-sm text-purple-600 mb-2">Visualisasi Tumpukan (Stack):</span>
+                    <div class="flex flex-col gap-1 items-center bg-slate-100 p-3 rounded-lg w-48 text-center">
+                        <div class="bg-green-500 text-white py-1.5 px-4 rounded w-full font-bold text-xs">Piring 3 (Terakhir Masuk / Pertama Keluar)</div>
+                        <div class="bg-yellow-500 text-white py-1.5 px-4 rounded w-full font-bold text-xs">Piring 2</div>
+                        <div class="bg-red-500 text-white py-1.5 px-4 rounded w-full font-bold text-xs">Piring 1 (Pertama Masuk / Terakhir Keluar)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Kembali -->
+            <div class="mt-8 flex justify-center">
+                <button onclick="kembaliKeMenu()" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> Kembali ke Menu Utama
+                </button>
+            </div>
+        </section>
+
+        <!-- 5. DETAIL MODUL: AYO BERPETUALANG (GAME) -->
+        <section id="modulPetualangan" class="hidden bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-green-400 animate-fade-in my-auto">
+            
+            <!-- Header Game -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-slate-200 pb-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-green-700 flex items-center gap-3">
+                        <i class="fa-solid fa-gamepad text-green-500"></i> Ayo Berpetualang!
+                    </h2>
+                    <p class="text-slate-500 text-xs font-semibold mt-1">Selesaikan seluruh tantangan di tiap level untuk menjadi Master Himpunan Data!</p>
+                </div>
+                <!-- Progres Global Visual -->
+                <div class="bg-green-50 border border-green-200 p-3 rounded-2xl flex items-center gap-3 w-full md:w-auto">
+                    <div class="text-2xl">🏆</div>
+                    <div class="w-full">
+                        <span class="block text-[10px] font-bold text-green-800 uppercase tracking-wider">Total Progress</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-24 bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div id="gameProgressGlobalBar" class="bg-green-500 h-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <span id="gameProgressGlobalText" class="text-xs font-extrabold text-green-700">0/9 Misi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MENU PEMILIHAN LEVEL & TANTANGAN -->
+            <div id="gameSelectionArea" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- LEVEL 1 CARD -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-extrabold px-3 py-1 rounded-full">LEVEL 1</span>
+                            <span id="scoreLvl1" class="text-xs font-bold text-slate-500">0/3 Selesai</span>
+                        </div>
+                        <h3 class="font-extrabold text-slate-800 text-lg mb-1">Pengelompokan Barang (Himpunan)</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed mb-4">Kamu bertugas membantu Ibu memilah barang belanjaan supermarket ke kategori yang sesuai agar rapi.</p>
+                    </div>
+                    <!-- Tantangan Buttons -->
+                    <div class="space-y-2 mt-4">
+                        <button onclick="startChallenge(1, 'mudah')" id="btn-1-mudah" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Mudah</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                        <button onclick="startChallenge(1, 'sedang')" id="btn-1-sedang" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Sedang</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                        <button onclick="startChallenge(1, 'sulit')" id="btn-1-sulit" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Sulit</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- LEVEL 2 CARD -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-extrabold px-3 py-1 rounded-full">LEVEL 2</span>
+                            <span id="scoreLvl2" class="text-xs font-bold text-slate-500">0/3 Selesai</span>
+                        </div>
+                        <h3 class="font-extrabold text-slate-800 text-lg mb-1">Mengelola Antrean (Queue)</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed mb-4">Atur antrean pelanggan di loket bioskop digital. Ingat prinsip utama antrean: Pertama Datang, Pertama Dilayani!</p>
+                    </div>
+                    <!-- Tantangan Buttons -->
+                    <div class="space-y-2 mt-4">
+                        <button onclick="startChallenge(2, 'mudah')" id="btn-2-mudah" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Mudah</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                        <button onclick="startChallenge(2, 'sedang')" id="btn-2-sedang" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Sedang</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                        <button onclick="startChallenge(2, 'sulit')" id="btn-2-sulit" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Sulit</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- LEVEL 3 CARD -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="bg-purple-100 text-purple-800 text-xs font-extrabold px-3 py-1 rounded-full">LEVEL 3</span>
+                            <span id="scoreLvl3" class="text-xs font-bold text-slate-500">0/3 Selesai</span>
+                        </div>
+                        <h3 class="font-extrabold text-slate-800 text-lg mb-1">Menyusun Tumpukan (Stack)</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed mb-4">Urutkan dan tumpuk piring di kafetaria sekolah sesuai dengan instruksi khusus. Terakhir masuk, pertama diambil!</p>
+                    </div>
+                    <!-- Tantangan Buttons -->
+                    <div class="space-y-2 mt-4">
+                        <button onclick="startChallenge(3, 'mudah')" id="btn-3-mudah" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Mudah</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                        <button onclick="startChallenge(3, 'sedang')" id="btn-3-sedang" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Sedang</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                        <button onclick="startChallenge(3, 'sulit')" id="btn-3-sulit" class="w-full bg-white hover:bg-green-50 border-2 border-slate-200 text-slate-700 font-bold py-2 px-3 rounded-xl text-sm transition-all flex justify-between items-center">
+                            <span>Tantangan Sulit</span>
+                            <span class="status-icon"><i class="fa-regular fa-circle text-slate-400"></i></span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- AREA GAME DINAMIS (KOTAK PERMAINAN AKTIF) -->
+            <div id="activeGameArea" class="hidden mt-8 bg-slate-50 p-6 rounded-2xl border-2 border-dashed border-green-400">
+                <!-- Info Level & Tantangan Aktif -->
+                <div class="flex justify-between items-center mb-4">
+                    <span id="activeChallengeTitle" class="bg-green-500 text-white font-extrabold text-sm px-4 py-1.5 rounded-full">Misi Aktif</span>
+                    <button onclick="exitActiveGame()" class="text-red-500 hover:text-red-700 font-extrabold text-xs flex items-center gap-1 bg-red-50 px-2 py-1.5 rounded border border-red-200"><i class="fa-solid fa-rectangle-xmark"></i> Keluar Misi</button>
+                </div>
+
+                <div id="gamePlayground" class="min-h-[250px] flex flex-col justify-center items-center">
+                    <!-- Konten Permainan Spesifik Akan Di-render di Sini Melalui JS -->
+                </div>
+            </div>
+
+            <!-- Tombol Kembali -->
+            <div class="mt-8 flex justify-center">
+                <button onclick="kembaliKeMenu()" class="bg-green-500 hover:bg-green-600 active:scale-95 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> Kembali ke Menu Utama
+                </button>
+            </div>
+        </section>
+
+        <!-- 6. DETAIL MODUL: ASESMEN SUMATIF & TANTANGAN HOTS -->
+        <section id="modulAsesmen" class="hidden bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-purple-400 animate-fade-in my-auto max-w-4xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-purple-700 mb-6 flex items-center gap-3">
+                <i class="fa-solid fa-clipboard-question text-purple-500"></i> Asesmen Sumatif & Tantangan HOTS
+            </h2>
+
+            <!-- Bagian 1: Asesmen Proyek Praktik -->
+            <div class="bg-purple-50 p-5 rounded-2xl border border-purple-200 mb-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="text-3xl">📁</div>
+                    <h3 class="font-extrabold text-purple-800 text-lg">Aktivitas Praktik Mandiri / Kelompok</h3>
+                </div>
+                <div class="prose prose-sm max-w-none text-slate-700 font-semibold leading-relaxed">
+                    <p class="mb-2 text-purple-900 font-bold">Proyek: Sistem Katalog Buku Perpustakaan Sekolah</p>
+                    <p class="text-xs text-slate-500 mb-4">Tujuan: Mendesain struktur himpunan data untuk mengorganisasi koleksi buku perpustakaan agar mudah dicari.</p>
+                    
+                    <ol class="list-decimal list-inside space-y-2 text-xs md:text-sm">
+                        <li>Bentuk kelompok berisi 3-4 siswa.</li>
+                        <li>Kunjungi perpustakaan sekolah kalian, pilihlah 15 buku acak.</li>
+                        <li>Identifikasi karakteristik tiap buku (Judul, Genre, Tahun Terbit, Penulis).</li>
+                        <li>Gambarkan representasi struktur data buku tersebut ke dalam bentuk:
+                            <ul class="list-disc list-inside ml-6 mt-1 text-slate-600 font-medium">
+                                <li>Himpunan (berdasarkan Genre buku).</li>
+                                <li>Tumpukan / Stack (alur peletakan buku yang baru dikembalikan di meja sirkulasi).</li>
+                                <li>Antrean / Queue (alur siswa yang ingin meminjam buku di loket).</li>
+                            </ul>
+                        </li>
+                        <li>Buatlah presentasi kreatif (bisa menggunakan karton atau salindia presentasi) untuk dikumpulkan kepada Ibu Ester!</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Bagian 2: Tantangan HOTS (Soal Cerita Uraian) -->
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="text-3xl">🔥</div>
+                    <h3 class="font-extrabold text-slate-800 text-lg">Soal Tantangan HOTS: Logika Kasir & Gudang</h3>
+                </div>
+                
+                <div class="bg-white border border-slate-200 p-4 rounded-xl mb-4 text-xs md:text-sm leading-relaxed text-slate-700 font-semibold">
+                    <p class="mb-2 text-indigo-700"><i class="fa-solid fa-feather-pointed"></i> <strong>Skenario Cerita:</strong></p>
+                    "Sebuah toko mainan memiliki satu jalur antrean pembayaran di kasir. Sementara itu, di gudang penyimpanan belakang, barang-barang diletakkan secara vertikal dalam satu kontainer sempit dari bawah ke atas. 
+                    <br><br>
+                    Suatu hari, 3 orang pelanggan bernama <strong>Alya, Beno, dan Candra</strong> mengantre berturut-turut di kasir untuk membayar mainan. Di saat bersamaan, petugas gudang ingin mengeluarkan mainan yang dipesan dengan urutan susun kontainer dari terbawah ke teratas: <strong>Mobil-mobilan, Robot, Boneka</strong>.
+                    <br><br>
+                    <strong>Pertanyaan Analisis:</strong> 
+                    1. Siapakah pelanggan yang akan selesai melakukan pembayaran terlebih dahulu di kasir? Mengapa? Jelaskan metodenya!
+                    2. Mainan apakah yang akan dikeluarkan paling pertama dari kontainer gudang? Mengapa? Jelaskan metodenya!"
+                </div>
+
+                <!-- Input Jawaban Siswa -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tuliskan Lembar Analisis Jawabarmu di Sini:</label>
+                        <textarea id="jawabanHots" rows="4" placeholder="Ketik jawaban analisismu di sini secara detail..." class="w-full p-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-400 focus:outline-none font-medium text-sm text-slate-700"></textarea>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <button onclick="periksaJawabanHots()" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> Periksa Analisis Mandiri
+                        </button>
+                        <button onclick="simpanJawabanHots()" class="bg-green-600 hover:bg-green-700 active:scale-95 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Jawaban
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Area Feedback Jawaban HOTS (Kunci Jawaban Guru) -->
+                <div id="feedbackHotsArea" class="hidden mt-4 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-xl">
+                    <h4 class="font-bold text-green-800 text-sm mb-2"><i class="fa-solid fa-lightbulb"></i> Analisis Solusi (Kunci Jawaban Ibu Ester):</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed font-semibold">
+                        <strong>1. Di Kasir (Antrean / Queue):</strong> Pelanggan yang selesai pertama adalah <strong>Alya</strong>. Karena jalur kasir menggunakan metode <strong>FIFO (First In, First Out)</strong>. Siapa yang mengantre pertama kali (Alya), dialah yang dilayani dan selesai terlebih dahulu.
+                        <br><br>
+                        <strong>2. Di Gudang (Tumpukan / Stack):</strong> Mainan yang dikeluarkan pertama kali adalah <strong>Boneka</strong>. Karena diletakkan vertikal dalam kontainer sempit dari bawah ke atas (Mobil &rarr; Robot &rarr; Boneka), maka Boneka berada paling atas. Menggunakan metode <strong>LIFO (Last In, First Out)</strong>, benda paling atas (terakhir dimasukkan) harus dikeluarkan terlebih dahulu sebelum bisa mengambil benda di bawahnya.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tombol Kembali -->
+            <div class="mt-8 flex justify-center">
+                <button onclick="kembaliKeMenu()" class="bg-purple-500 hover:bg-purple-600 active:scale-95 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> Kembali ke Menu Utama
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-400 py-4 px-6 text-center text-xs border-t border-slate-700">
+        <p>&copy; 2026 Multimedia Pembelajaran Interaktif Informatika SMP Kelas VII. Dirancang untuk Papan Tulis Digital Kelas.</p>
+    </footer>
+
+    <!-- JS LOGIC SYSTEM -->
+    <script>
+        // State Global Aplikasi
+        let petualang = {
+            nama: "",
+            sekolah: "",
+            progresGame: {
+                "1-mudah": false,
+                "1-sedang": false,
+                "1-sulit": false,
+                "2-mudah": false,
+                "2-sedang": false,
+                "2-sulit": false,
+                "3-mudah": false,
+                "3-sedang": false,
+                "3-sulit": false,
+            },
+            jawabanHots: ""
+        };
+
+        // Data Penunjang Game
+        let activeLevel = 0;
+        let activeDifficulty = "";
+        
+        // Simulasi data game level 1 (Himpunan)
+        const gameDataLvl1 = {
+            mudah: {
+                instruksi: "Tarik atau Sentuh barang di bawah untuk mengelompokkannya ke dalam Himpunan Buah-buahan!",
+                items: [
+                    { name: "Apel", isTarget: true, emoji: "🍎" },
+                    { name: "Buku", isTarget: false, emoji: "📘" },
+                    { name: "Jeruk", isTarget: true, emoji: "🍊" },
+                    { name: "Pensil", isTarget: false, emoji: "✏️" }
+                ]
+            },
+            sedang: {
+                instruksi: "Tentukan mana barang yang termasuk Himpunan Alat Tulis Sekolah!",
+                items: [
+                    { name: "Penggaris", isTarget: true, emoji: "📏" },
+                    { name: "Sepatu", isTarget: false, emoji: "👟" },
+                    { name: "Buku Tulis", isTarget: true, emoji: "📓" },
+                    { name: "Roti", isTarget: false, emoji: "🍞" },
+                    { name: "Penghapus", isTarget: true, emoji: "🧽" }
+                ]
+            },
+            sulit: {
+                instruksi: "Kelompokkan barang yang termasuk Himpunan Perangkat Keras Masukan (Input Device) Komputer!",
+                items: [
+                    { name: "Keyboard", isTarget: true, emoji: "⌨️" },
+                    { name: "Monitor", isTarget: false, emoji: "🖥️" },
+                    { name: "Mouse", isTarget: true, emoji: "🖱️" },
+                    { name: "Printer", isTarget: false, emoji: "🖨️" },
+                    { name: "Scanner", isTarget: true, emoji: "📸" }
+                ]
+            }
+        };
+
+        // Simulasi data game level 2 (Queue / Antrean)
+        const gameDataLvl2 = {
+            mudah: {
+                instruksi: "Berikut adalah antrean tiket bioskop (Budi &rarr; Ani &rarr; Cica). Siapa yang berhak mendapatkan tiket pertama kali berdasarkan sistem Queue (FIFO)?",
+                pilihan: [
+                    { name: "Budi (Paling depan)", correct: true },
+                    { name: "Ani (Tengah)", correct: false },
+                    { name: "Cica (Paling belakang)", correct: false }
+                ]
+            },
+            sedang: {
+                instruksi: "Kantin memiliki antrean: [Eko, Dwi, Tri, Catur]. Jika Eko sudah selesai membayar dan dilayani, siapakah yang berikutnya berada di baris paling depan antrean?",
+                pilihan: [
+                    { name: "Dwi", correct: true },
+                    { name: "Tri", correct: false },
+                    { name: "Catur", correct: false }
+                ]
+            },
+            sulit: {
+                instruksi: "Sebuah printer mencetak dokumen secara antrean. Dokumen masuk: [Tugas_A, Tugas_B, Tugas_C, Tugas_D]. Jika printer macet saat mencetak Tugas_A dan membatalkannya, dokumen manakah yang selanjutnya akan dicetak terlebih dahulu?",
+                pilihan: [
+                    { name: "Tugas_B", correct: true },
+                    { name: "Tugas_C", correct: false },
+                    { name: "Tugas_D", correct: false }
+                ]
+            }
+        };
+
+        // Simulasi data game level 3 (Stack / Tumpukan)
+        const gameDataLvl3 = {
+            mudah: {
+                instruksi: "Kamu memiliki tumpukan piring di atas meja dapur dengan urutan (bawah ke atas): Piring Biru &rarr; Piring Merah. Piring manakah yang harus kamu ambil terlebih dahulu jika ingin mencuci piring teratas tanpa merubuhkannya?",
+                pilihan: [
+                    { name: "Piring Merah (Paling Atas / Terakhir Masuk)", correct: true },
+                    { name: "Piring Biru (Paling Bawah / Pertama Masuk)", correct: false }
+                ]
+            },
+            sedang: {
+                instruksi: "Kamu menumpuk buku pelajaran di tas sekolah dengan urutan memasukkan: Matematika, kemudian Bahasa Inggris, lalu Informatika terakhir. Buku apa yang berada paling atas dan otomatis terambil pertama kali saat tas dibuka?",
+                pilihan: [
+                    { name: "Informatika", correct: true },
+                    { name: "Bahasa Inggris", correct: false },
+                    { name: "Matematika", correct: false }
+                ]
+            },
+            sulit: {
+                instruksi: "Diberikan tumpukan balok mainan (dari bawah ke atas): [Kuning, Hijau, Merah, Biru]. Kamu ingin mengambil balok Kuning. Berapa jumlah balok di atasnya yang harus dipindahkan terlebih dahulu sesuai prinsip Stack (LIFO)?",
+                pilihan: [
+                    { name: "3 Balok (Biru, Merah, Hijau)", correct: true },
+                    { name: "2 Balok (Biru, Merah)", correct: false },
+                    { name: "1 Balok (Biru)", correct: false }
+                ]
+            }
+        };
+
+        // Fungsi Memulai Petualangan (Login Identitas)
+        function mulaiPetualangan() {
+            const namaVal = document.getElementById("inputNama").value.trim();
+            const sekolahVal = document.getElementById("inputSekolah").value.trim();
+
+            if (!namaVal || !sekolahVal) {
+                alertCustom("Mohon lengkapi nama dan asal sekolahmu terlebih dahulu ya!");
+                return;
+            }
+
+            petualang.nama = namaVal;
+            petualang.sekolah = sekolahVal;
+
+            // Update Header Display
+            document.getElementById("displayNama").textContent = petualang.nama;
+            document.getElementById("displaySekolah").textContent = petualang.sekolah;
+            document.getElementById("userInfoDisplay").classList.remove("hidden");
+
+            // Navigasi ke Menu Utama
+            showSection("mainMenu");
+            updateVisualProgress();
+        }
+
+        // Fungsi Pengendali Navigasi Menu / Modul
+        function bukaModul(modulKey) {
+            if (modulKey === 'tujuan') {
+                showSection("modulTujuan");
+            } else if (modulKey === 'materi') {
+                showSection("modulMateri");
+                pilihMateri(1); // Set default tab ke materi 1
+            } else if (modulKey === 'petualangan') {
+                showSection("modulPetualangan");
+                document.getElementById("activeGameArea").classList.add("hidden");
+                document.getElementById("gameSelectionArea").classList.remove("hidden");
+                updateVisualProgress();
+            } else if (modulKey === 'asesmen') {
+                showSection("modulAsesmen");
+                document.getElementById("feedbackHotsArea").classList.add("hidden");
+            }
+        }
+
+        function kembaliKeMenu() {
+            showSection("mainMenu");
+            updateVisualProgress();
+        }
+
+        // Helper untuk Mengatur Display Bagian Tertentu
+        function showSection(sectionId) {
+            const sections = ["welcomeScreen", "mainMenu", "modulTujuan", "modulMateri", "modulPetualangan", "modulAsesmen"];
+            sections.forEach(sec => {
+                const el = document.getElementById(sec);
+                if (sec === sectionId) {
+                    el.classList.remove("hidden");
+                } else {
+                    el.classList.add("hidden");
+                }
+            });
+        }
+
+        // Fungsi Rangkuman Materi Tab Switcher
+        function pilihMateri(index) {
+            // Sembunyikan semua konten materi
+            document.getElementById("kontenMateri1").classList.add("hidden");
+            document.getElementById("kontenMateri2").classList.add("hidden");
+            document.getElementById("kontenMateri3").classList.add("hidden");
+
+            // Reset style tab
+            const tabs = ["tabMat1", "tabMat2", "tabMat3"];
+            tabs.forEach(tabId => {
+                const tabEl = document.getElementById(tabId);
+                tabEl.className = "px-4 py-2 rounded-xl font-bold text-sm bg-slate-100 text-slate-600 hover:bg-amber-100";
+            });
+
+            // Aktifkan tab terpilih
+            document.getElementById(`kontenMateri${index}`).classList.remove("hidden");
+            document.getElementById(`tabMat${index}`).className = "px-4 py-2 rounded-xl font-bold text-sm bg-amber-500 text-white shadow-md";
+        }
+
+        // Sistem Game Pembelajaran Interaktif
+        function startChallenge(level, difficulty) {
+            activeLevel = level;
+            activeDifficulty = difficulty;
+
+            // Tampilkan area playground permainan aktif
+            document.getElementById("gameSelectionArea").classList.add("hidden");
+            document.getElementById("activeGameArea").classList.remove("hidden");
+
+            // Set Title Tantangan
+            const titleEl = document.getElementById("activeChallengeTitle");
+            titleEl.textContent = `Level ${level} - Tantangan ${difficulty.toUpperCase()}`;
+
+            renderGamePlayground();
+        }
+
+        function exitActiveGame() {
+            document.getElementById("activeGameArea").classList.add("hidden");
+            document.getElementById("gameSelectionArea").classList.remove("hidden");
+        }
+
+        // Merender Konten Game Secara Dinamis Berdasarkan Level & Tantangan
+        function renderGamePlayground() {
+            const container = document.getElementById("gamePlayground");
+            container.innerHTML = ""; // Bersihkan kontainer
+
+            if (activeLevel === 1) {
+                // Game Tipe Pengelompokan Data (Himpunan)
+                const data = gameDataLvl1[activeDifficulty];
+                
+                // Judul / Instruksi Game
+                const instrHtml = `<p class="text-sm font-bold text-slate-700 text-center mb-6 max-w-lg bg-emerald-50 border border-emerald-200 p-3 rounded-xl">${data.instruksi}</p>`;
+                
+                // Item Container
+                let itemsHtml = `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-xl justify-center mb-8">`;
+                data.items.forEach((item, idx) => {
+                    itemsHtml += `
+                        <button onclick="pilihItemLvl1(${idx}, ${item.isTarget})" id="itemLvl1-${idx}" class="bg-white border-2 border-slate-200 hover:border-green-400 active:scale-95 transition-all p-4 rounded-2xl shadow-sm text-center flex flex-col items-center gap-2">
+                            <span class="text-4xl">${item.emoji}</span>
+                            <span class="font-bold text-xs text-slate-700">${item.name}</span>
+                        </button>
+                    `;
+                });
+                itemsHtml += `</div>`;
+
+                // Wrapper Tambahan untuk Hasil
+                const actionHtml = `
+                    <div id="gameLvl1Feedback" class="text-center font-bold text-sm text-slate-600">
+                        Pilih semua barang yang termasuk dalam kriteria di atas!
+                    </div>
+                `;
+
+                container.innerHTML = instrHtml + itemsHtml + actionHtml;
+
+            } else if (activeLevel === 2) {
+                // Game Tipe Antrean (Queue)
+                const data = gameDataLvl2[activeDifficulty];
+
+                const instrHtml = `<p class="text-sm font-bold text-slate-700 text-center mb-6 max-w-lg bg-emerald-50 border border-emerald-200 p-3 rounded-xl">${data.instruksi}</p>`;
+                
+                let pilarPilihanHtml = `<div class="flex flex-col gap-3 w-full max-w-md">`;
+                data.pilihan.forEach((pil, idx) => {
+                    pilarPilihanHtml += `
+                        <button onclick="pilihJawabanMulti(${pil.correct})" class="bg-white border-2 border-slate-200 hover:border-yellow-400 active:scale-95 p-4 rounded-xl shadow-sm font-bold text-sm text-slate-700 text-left transition-all flex items-center gap-3">
+                            <span class="w-8 h-8 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center text-xs font-black">${idx + 1}</span>
+                            <span>${pil.name}</span>
+                        </button>
+                    `;
+                });
+                pilarPilihanHtml += `</div>`;
+
+                container.innerHTML = instrHtml + pilarPilihanHtml;
+
+            } else if (activeLevel === 3) {
+                // Game Tipe Tumpukan (Stack)
+                const data = gameDataLvl3[activeDifficulty];
+
+                const instrHtml = `<p class="text-sm font-bold text-slate-700 text-center mb-6 max-w-lg bg-emerald-50 border border-emerald-200 p-3 rounded-xl">${data.instruksi}</p>`;
+                
+                let pilarPilihanHtml = `<div class="flex flex-col gap-3 w-full max-w-md">`;
+                data.pilihan.forEach((pil, idx) => {
+                    pilarPilihanHtml += `
+                        <button onclick="pilihJawabanMulti(${pil.correct})" class="bg-white border-2 border-slate-200 hover:border-purple-400 active:scale-95 p-4 rounded-xl shadow-sm font-bold text-sm text-slate-700 text-left transition-all flex items-center gap-3">
+                            <span class="w-8 h-8 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-black">${idx + 1}</span>
+                            <span>${pil.name}</span>
+                        </button>
+                    `;
+                });
+                pilarPilihanHtml += `</div>`;
+
+                container.innerHTML = instrHtml + pilarPilihanHtml;
+            }
+        }
+
+        // Interaksi Game Level 1 (Himpunan)
+        let lvl1CorrectCount = 0;
+        let lvl1SelectedCount = 0;
+        
+        function pilihItemLvl1(idx, isTarget) {
+            const btn = document.getElementById(`itemLvl1-${idx}`);
+            
+            // Hindari seleksi ganda barang yang sama
+            if (btn.classList.contains("selected-done")) return;
+
+            btn.classList.add("selected-done");
+
+            if (isTarget) {
+                btn.className = "bg-green-100 border-2 border-green-500 p-4 rounded-2xl shadow-sm text-center flex flex-col items-center gap-2 text-green-700";
+                lvl1CorrectCount++;
+            } else {
+                btn.className = "bg-red-100 border-2 border-red-400 p-4 rounded-2xl shadow-sm text-center flex flex-col items-center gap-2 text-red-500";
+            }
+
+            // Hitung target barang di level aktif
+            const data = gameDataLvl1[activeDifficulty];
+            const maxTarget = data.items.filter(item => item.isTarget).length;
+
+            lvl1SelectedCount++;
+
+            // Evaluasi kemenangan permainan
+            if (lvl1CorrectCount === maxTarget) {
+                handleMisiSukses();
+                // Reset State
+                lvl1CorrectCount = 0;
+                lvl1SelectedCount = 0;
+            } else if (lvl1SelectedCount === data.items.length && lvl1CorrectCount < maxTarget) {
+                alertCustom("Wah, jawabanmu belum tepat sepenuhnya. Mari kita coba lagi!");
+                renderGamePlayground();
+                lvl1CorrectCount = 0;
+                lvl1SelectedCount = 0;
+            }
+        }
+
+        // Interaksi Game Level 2 & 3 (Pilihan Ganda Logika)
+        function pilihJawabanMulti(isCorrect) {
+            if (isCorrect) {
+                handleMisiSukses();
+            } else {
+                alertCustom("Jawaban kurang tepat. Coba bayangkan metodenya kembali ya!");
+            }
+        }
+
+        // Pemroses Kelulusan Misi Permainan
+        function handleMisiSukses() {
+            const key = `${activeLevel}-${activeDifficulty}`;
+            petualang.progresGame[key] = true;
+
+            // Buat efek visual popup keberhasilan
+            const container = document.getElementById("gamePlayground");
+            container.innerHTML = `
+                <div class="text-center p-6 bg-green-50 border-2 border-green-300 rounded-3xl animate-bounce max-w-sm">
+                    <span class="text-5xl">🎉</span>
+                    <h3 class="font-black text-green-700 text-xl mt-4">Hebat, Kamu Berhasil!</h3>
+                    <p class="text-xs text-slate-500 font-semibold mt-1">Pemahaman Himpunan Datamu semakin luar biasa!</p>
+                    <button onclick="exitActiveGame()" class="mt-6 bg-green-500 hover:bg-green-600 text-white font-extrabold text-sm py-2 px-6 rounded-xl shadow">
+                        Lanjut Petualangan <i class="fa-solid fa-circle-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            updateVisualProgress();
+        }
+
+        // Melakukan Pembaruan Tampilan Indikator Progres Level
+        function updateVisualProgress() {
+            let solvedTotal = 0;
+            const totalMisi = 9;
+
+            let solvedLvl1 = 0;
+            let solvedLvl2 = 0;
+            let solvedLvl3 = 0;
+
+            // Evaluasi status tiap tombol
+            for (let key in petualang.progresGame) {
+                const isSolved = petualang.progresGame[key];
+                const btn = document.getElementById(`btn-${key}`);
+                
+                if (btn) {
+                    const iconSpan = btn.querySelector(".status-icon");
+                    if (isSolved) {
+                        btn.classList.add("bg-green-50", "border-green-500", "text-green-700");
+                        iconSpan.innerHTML = `<i class="fa-solid fa-circle-check text-green-500 text-lg"></i>`;
+                        solvedTotal++;
+                        
+                        // Hitung per level
+                        if (key.startsWith("1-")) solvedLvl1++;
+                        if (key.startsWith("2-")) solvedLvl2++;
+                        if (key.startsWith("3-")) solvedLvl3++;
+                    } else {
+                        btn.classList.remove("bg-green-50", "border-green-500", "text-green-700");
+                        iconSpan.innerHTML = `<i class="fa-regular fa-circle text-slate-400 text-lg"></i>`;
+                    }
+                }
+            }
+
+            // Update Teks Skor Per-Level
+            document.getElementById("scoreLvl1").textContent = `${solvedLvl1}/3 Selesai`;
+            document.getElementById("scoreLvl2").textContent = `${solvedLvl2}/3 Selesai`;
+            document.getElementById("scoreLvl3").textContent = `${solvedLvl3}/3 Selesai`;
+
+            // Update Progres Global Bar
+            const persentase = (solvedTotal / totalMisi) * 100;
+            
+            // Menu Utama Card Progress
+            document.getElementById("progressBarMenu").style.width = `${persentase}%`;
+            document.getElementById("progressTextMenu").textContent = `${solvedTotal}/${totalMisi} Tantangan`;
+
+            // Game Modul Header Progress
+            document.getElementById("gameProgressGlobalBar").style.width = `${persentase}%`;
+            document.getElementById("gameProgressGlobalText").textContent = `${solvedTotal}/${totalMisi} Misi`;
+        }
+
+        // Sistem Jawaban Analisis HOTS
+        function periksaJawabanHots() {
+            const userJawaban = document.getElementById("jawabanHots").value.trim();
+            if (userJawaban.length < 15) {
+                alertCustom("Tuliskan analisis yang lebih lengkap terlebih dahulu ya agar melatih kemampuan berpikir kritismu!");
+                return;
+            }
+
+            // Tampilkan Kunci Jawaban
+            document.getElementById("feedbackHotsArea").classList.remove("hidden");
+        }
+
+        function simpanJawabanHots() {
+            const userJawaban = document.getElementById("jawabanHots").value.trim();
+            if (userJawaban.length < 5) {
+                alertCustom("Kotak jawaban masih kosong!");
+                return;
+            }
+
+            petualang.jawabanHots = userJawaban;
+            alertCustom("Jawaban analisismu berhasil disimpan dalam sistem sementara pembelajaran interaktif!");
+        }
+
+        // Custom Modal Alert ramah papan tulis interaktif (Tanpa menggunakan browser alert standar)
+        function alertCustom(message) {
+            // Buat elemen dialog kustom
+            const modal = document.createElement("div");
+            modal.className = "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in";
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full text-center border-4 border-green-400 shadow-2xl">
+                    <div class="text-4xl mb-4">💡</div>
+                    <p class="font-bold text-slate-700 text-sm md:text-base leading-relaxed mb-6">${message}</p>
+                    <button id="closeAlertBtn" class="bg-green-500 hover:bg-green-600 text-white font-extrabold text-sm py-2.5 px-8 rounded-xl shadow-md active:scale-95 transition-all">OK, Mengerti!</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById("closeAlertBtn").addEventListener("click", () => {
+                modal.remove();
+            });
+        }
+
+        // Sistem Layar Penuh (Fullscreen) Papan Interaktif
+        function toggleFullscreen() {
+            const icon = document.getElementById("fullscreenIcon");
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alertCustom(`Gagal mengaktifkan mode layar penuh: ${err.message}`);
+                });
+                icon.className = "fa-solid fa-compress";
+            } else {
+                document.exitFullscreen();
+                icon.className = "fa-solid fa-expand";
+            }
+        }
+    </script>
+
+</body>
+</html>
